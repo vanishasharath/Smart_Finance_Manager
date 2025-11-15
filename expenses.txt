@@ -1,0 +1,2 @@
+1,500.0,2025-02-10,food,lunch with friends
+3,400.0,2025-02-10,shopping,clothes
