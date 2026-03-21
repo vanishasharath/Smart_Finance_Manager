@@ -1,11 +1,15 @@
 public class Expense {
-    private int id;
-    private double amount;
-    private String date;
-    private String category;
-    private String description;
+    private final int id;
+    private final double amount;
+    private final String date;
+    private final String category;
+    private final String description;
 
     public Expense(int id, double amount, String date, String category, String description) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+
         this.id = id;
         this.amount = amount;
         this.date = date;
@@ -35,7 +39,7 @@ public class Expense {
 
     @Override
     public String toString() {
-        return id + " | " + amount + " | " + date + " | " + category + " | " + description;
+        return String.format("ID: %d | Amount: %.2f | Date: %s | Category: %s | Desc: %s",
+                id, amount, date, category, description);
     }
 }
-

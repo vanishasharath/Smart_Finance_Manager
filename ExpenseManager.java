@@ -2,8 +2,10 @@ import java.io.*;
 import java.util.*;
 
 public class ExpenseManager {
-    private ArrayList<Expense> expenses = new ArrayList<>();
+
+    private final ArrayList<Expense> expenses = new ArrayList<>();
     private int currentId = 1;
+    private double monthlyBudget = 0;
 
     public void addExpense(double amount, String date, String category, String description) {
         Expense e = new Expense(currentId++, amount, date, category, description);
@@ -22,8 +24,13 @@ public class ExpenseManager {
     }
 
     public void deleteExpense(int id) {
-        expenses.removeIf(expense -> expense.getId() == id);
-        System.out.println("Expense removed!");
+        boolean removed = expenses.removeIf(expense -> expense.getId() == id);
+
+        if (removed) {
+            System.out.println("Expense removed!");
+        } else {
+            System.out.println("Expense not found!");
+        }
     }
 
     public void monthlyTotal(String month) {
@@ -43,46 +50,109 @@ public class ExpenseManager {
                 total += e.getAmount();
             }
         }
-        System.out.println("Total for " + category + ": " + total);
+
+        if (total == 0) {
+            System.out.println("No expenses found for category: " + category);
+        } else {
+            System.out.println("Total for " + category + ": " + total);
+        }
+    }
+
+    public void sortByAmount() {
+        expenses.sort(Comparator.comparingDouble(Expense::getAmount));
+        System.out.println("Expenses sorted by amount.");
+        viewExpenses();
+    }
+
+    public void sortByDate() {
+        expenses.sort(Comparator.comparing(Expense::getDate));
+        System.out.println("Expenses sorted by date.");
+        viewExpenses();
+    }
+
+    public void setBudget(double budget) {
+        this.monthlyBudget = budget;
+        System.out.println("Monthly budget set to: " + budget);
+    }
+
+    public void showInsights() {
+        if (expenses.isEmpty()) {
+            System.out.println("No expenses available.");
+            return;
+        }
+
+        double total = 0;
+        Map<String, Double> categoryMap = new HashMap<>();
+
+        for (Expense e : expenses) {
+            total += e.getAmount();
+
+            categoryMap.put(
+                e.getCategory(),
+                categoryMap.getOrDefault(e.getCategory(), 0.0) + e.getAmount()
+            );
+        }
+
+        // Find top category
+        String topCategory = "";
+        double max = 0;
+
+        for (Map.Entry<String, Double> entry : categoryMap.entrySet()) {
+            if (entry.getValue() > max) {
+                max = entry.getValue();
+                topCategory = entry.getKey();
+            }
+        }
+
+        double average = total / expenses.size();
+
+        System.out.println("\n===== Spending Insights =====");
+        System.out.println("Total Spending: " + total);
+        System.out.println("Average Expense: " + average);
+        System.out.println("Top Category: " + topCategory);
+
+        if (monthlyBudget > 0 && total > monthlyBudget) {
+            System.out.println("⚠ Budget exceeded!");
+        }
     }
 
     public void saveToFile() {
-        try {
-            FileWriter fw = new FileWriter("expenses.txt");
+        try (FileWriter fw = new FileWriter("expenses.txt")) {
             for (Expense e : expenses) {
                 fw.write(e.getId() + "," + e.getAmount() + "," + e.getDate() + "," +
-                         e.getCategory() + "," + e.getDescription() + "\n");
+                        e.getCategory() + "," + e.getDescription() + "\n");
             }
-            fw.close();
             System.out.println("Saved!");
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("Error saving file.");
         }
     }
 
     public void loadFromFile() {
-        try {
-            File file = new File("expenses.txt");
-            if (!file.exists()) return;
+        File file = new File("expenses.txt");
+        if (!file.exists()) return;
 
-            BufferedReader br = new BufferedReader(new FileReader(file));
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
-            
+
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
+
                 Expense e = new Expense(
-                    Integer.parseInt(data[0]),
-                    Double.parseDouble(data[1]),
-                    data[2],
-                    data[3],
-                    data[4]
+                        Integer.parseInt(data[0]),
+                        Double.parseDouble(data[1]),
+                        data[2],
+                        data[3],
+                        data[4]
                 );
+
                 expenses.add(e);
                 currentId = Math.max(currentId, e.getId() + 1);
             }
-            br.close();
+
             System.out.println("Loaded previous data!");
-        } catch (Exception e) {
+
+        } catch (IOException | NumberFormatException e) {
             System.out.println("Error loading file.");
         }
     }
