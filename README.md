@@ -51,3 +51,52 @@ ExpenseTrackerProject/
 * Modular and clean code design
 
 ---
+
+## ▶️ How to Run
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/your-username/ExpenseTrackerProject.git
+cd ExpenseTrackerProject
+```
+
+---
+
+### 2️⃣ Compile the Program
+
+Make sure Java is installed (`javac -version`)
+
+```bash
+javac Main.java ExpenseManager.java Expense.java
+```
+
+---
+
+### 3️⃣ Run the Application
+
+```bash
+java Main
+```
+
+---
+
+### 🖥️ Sample Menu
+
+```
+====== Smart Expense Manager ======
+1. Add Expense
+2. View Expenses
+3. Delete Expense
+4. Monthly Total
+5. Category Total
+6. Sort by Amount
+7. Sort by Date
+8. Save & Exit
+9. Set Monthly Budget
+10. View Spending Insights
+```
+
+---
+
+
