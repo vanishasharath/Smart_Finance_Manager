@@ -1,5 +1,0 @@
-3,400.0,2025-02-10,shopping,clothes
-4,500.0,2025-03-01,lunch,went out for lunch with friends
-5,1200.0,2025-03-02,travel,cab
-6,1500.0,2025-03-10,dinner,dinner
-7,1000.0,2025-03-11,travel,cab
